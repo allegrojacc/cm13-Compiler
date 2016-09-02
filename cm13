@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+current_dir=$(pwd)
+cm_date="20160901"
+cm_version="cm-13.0-"$cm_date"-NIGHTLY-w5"
+zip_name="cm-13.0-NIGHTLY-w5.zip"
+zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
+
+wget https://download.cyanogenmod.org/get/jenkins/177131/cm-13.0-20160901-NIGHTLY-w5.zip -O $zip_name_date
+mkdir out
+unzip $zip_name_date -d $current_dir/out
+rm $zip_name_date
+
+echo "Create dirs"
+mkdir -p out/system/app/Updater
+mkdir -p out/system/usr/keylayout
+
+echo "Move files"
+cp /var/www/html/updates/update.apk $current_dir/out/system/app/Updater/Updater.apk
+mv $current_dir/Generic.kl $current_dir/out/system/usr/keylayout/Generic.kl
+mv $current_dir/fixup.sh $current_dir/out/fixup.sh
+
+echo "Edit Build.ptop"
+sed -i 's/w5/w55n/g' $current_dir/out/system/build.prop
+echo '' >> $current_dir/out/system/build.prop
+echo 'ro.nfc.port=I2C' >> $current_dir/out/system/build.prop
+echo 'ro.build.description=w55n_global_com-user 4.4.2 KOT49I.A1398228431 1398228431 release-keys' >> $current_dir/out/system/build.prop
+echo 'ro.build.fingerprint=lge/w55n_global_com/w55n:4.4.2/KOT49I.A1398228431/1398228431:user/release-keys' >> $current_dir/out/system/build.prop
+echo 'persist.radio.multisim.config=none' >> $current_dir/out/system/build.prop
+echo 'telephony.lteOnCdmaDevice=0' >> $current_dir/out/system/build.prop
+echo 'ro.build.product=w55n' >> $current_dir/out/system/build.prop
+echo 'ro.product.model=LG-D280n' >> $current_dir/out/system/build.prop
+echo 'ro.product.device=w55n' >> $current_dir/out/system/build.prop
+echo 'ro.sf.hwrotation=180' >> $current_dir/out/system/build.prop
+
+echo "Edit updater-script"
+sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > $current_dir/ups_tmp
+rm $current_dir/out/META-INF/com/google/android/updater-script
+mv $current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script
+echo 'mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+echo 'package_extract_dir("system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+echo 'unmount("/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+
+echo "Compile to zip"
+cd $current_dir/out
+zip -r $zip_name_date .
+cd $current_dir/
+mv $current_dir/out/$zip_name_date $current_dir/
+echo "Remove tmp files"
+rm -r $current_dir/out
+
+echo "Create link && send update note"
+cp $current_dir/$zip_name_date /var/www/html/updates/zip/$zip_name
+echo "http://app-updater.pl/updates/zip/"$zip_name > /var/www/html/updates/txt/download_link.txt
+echo $cm_version > /var/www/html/updates/txt/version.txt
+echo $cm_version > /var/www/html/updates/txt/version_debug.txt
+echo "Succes"
