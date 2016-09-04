@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
-cm_date="20160901"
-cm_version="cm-13.0-"$cm_date"-NIGHTLY-w5"
+cm_date="20160903"
+cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
 zip_name="cm-13.0-NIGHTLY-w5.zip"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
-wget https://download.cyanogenmod.org/get/jenkins/177131/cm-13.0-20160901-NIGHTLY-w5.zip -O $zip_name_date
+wget https://download.cyanogenmod.org/get/jenkins/177409/cm-13.0-20160903-NIGHTLY-w5.zip -O $zip_name_date
 mkdir out
 unzip $zip_name_date -d $current_dir/out
 rm $zip_name_date
@@ -19,7 +19,7 @@ cp /var/www/html/updates/update.apk $current_dir/out/system/app/Updater/Updater.
 mv $current_dir/Generic.kl $current_dir/out/system/usr/keylayout/Generic.kl
 mv $current_dir/fixup.sh $current_dir/out/fixup.sh
 
-echo "Edit Build.ptop"
+echo "Edit Build.prop"
 sed -i 's/w5/w55n/g' $current_dir/out/system/build.prop
 echo '' >> $current_dir/out/system/build.prop
 echo 'ro.nfc.port=I2C' >> $current_dir/out/system/build.prop
@@ -48,7 +48,7 @@ mv $current_dir/out/$zip_name_date $current_dir/
 echo "Remove tmp files"
 rm -r $current_dir/out
 
-echo "Create link && send update note"
+echo "Create link && send update"
 cp $current_dir/$zip_name_date /var/www/html/updates/zip/$zip_name
 echo "http://app-updater.pl/updates/zip/"$zip_name > /var/www/html/updates/txt/download_link.txt
 echo $cm_version > /var/www/html/updates/txt/version.txt
