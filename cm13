@@ -42,7 +42,7 @@ echo 'unmount("/system");' >> $current_dir/out/META-INF/com/google/android/updat
 
 echo "Compile to zip"
 cd $current_dir/out
-zip 9 -r $zip_name_date .
+zip -r $zip_name_date .
 cd $current_dir/
 mv $current_dir/out/$zip_name_date $current_dir/
 echo "Remove tmp files"
