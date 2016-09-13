@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
-cm_date="20160909"
+cm_date="20160912"
 cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
 zip_name="cm-13.0-NIGHTLY-w5.zip"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
-wget https://download.cyanogenmod.org/get/jenkins/178296/cm-13.0-20160909-NIGHTLY-w5.zip -O $zip_name_date
+wget https://download.cyanogenmod.org/get/jenkins/178766/cm-13.0-20160912-NIGHTLY-w5.zip -O $zip_name_date
 mkdir out
 unzip $zip_name_date -d $current_dir/out
 rm $zip_name_date
