@@ -69,7 +69,8 @@ else
 	
 	echo "Create MD5"
 	md5sum $zip_name_date > $zip_name_date.md5
-	md5sum /var/www/html/updates/zip/update.zip > /var/www/html/updates/zip/update.zip.md5
+	md5sum /var/www/html/updates/zip/update.zip > $current_dir/update.zip.md5
+	cp $current_dir/update.zip.md5 /var/www/html/updates/zip/update.zip.md5
 
 	echo "Succes"
 fi
