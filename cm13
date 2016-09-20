@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
-cm_date="20160919"
+cm_date="20160920"
 cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
-sha1sum="225110948403897082CD5043467FA5F4E836D6CD"
+sha1sum="15363C4A70E0C5025A63E45B760D37FCAF207D73"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
-wget https://download.cyanogenmod.org/get/jenkins/179802/cm-13.0-20160919-NIGHTLY-w5.zip -O $zip_name_date
+wget https://download.cyanogenmod.org/get/jenkins/179943/cm-13.0-20160920-NIGHTLY-w5.zip -O $zip_name_date
 
 sha1sum $zip_name_date
 sha1down=$sha1sum"  "$zip_name_date
