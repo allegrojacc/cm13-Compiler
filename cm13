@@ -6,6 +6,7 @@ sha1sum="59DF5764F0750D9595313EDB0E5D5D7BBC9FE14F"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
 wget https://download.cyanogenmod.org/get/jenkins/180511/cm-13.0-20160924-NIGHTLY-w5.zip -O $zip_name_date
+wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip"
 
 sha1sum $zip_name_date
 sha1down=$sha1sum"  "$zip_name_date
@@ -63,7 +64,9 @@ else
 
 	echo "Create link && send update"
 	cp $current_dir/$zip_name_date /var/www/html/updates/zip/update.zip
+	mv $current_dir/"gapps.zip" /var/www/html/updates/zip/gapps.zip
 	echo "http://app-updater.pl/updates/zip/update.zip" > /var/www/html/updates/txt/download_link.txt
+	echo "http://app-updater.pl/updates/zip/gapps.zip" > /var/www/html/updates/txt/download_gapps.txt
 	echo $cm_version > /var/www/html/updates/txt/version.txt
 	echo $cm_version > /var/www/html/updates/txt/version_debug.txt
 	
