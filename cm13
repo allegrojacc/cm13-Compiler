@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
-cm_date="20160924"
+cm_date="20160927"
 cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
-sha1sum="59DF5764F0750D9595313EDB0E5D5D7BBC9FE14F"
+sha1sum="4B32CB976E74BFE6E03B1D40E77F9FF523077548"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
-wget https://download.cyanogenmod.org/get/jenkins/180511/cm-13.0-20160924-NIGHTLY-w5.zip -O $zip_name_date
-wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip"
+wget https://download.cyanogenmod.org/get/jenkins/180988/cm-13.0-20160927-NIGHTLY-w5.zip -O $zip_name_date
+wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip");
+gapps_status=$?;
 
 sha1sum $zip_name_date
 sha1down=$sha1sum"  "$zip_name_date
@@ -64,12 +65,20 @@ else
 
 	echo "Create link && send update"
 	cp $current_dir/$zip_name_date /var/www/html/updates/zip/update.zip
-	mv $current_dir/"gapps.zip" /var/www/html/updates/zip/gapps.zip
 	echo "http://app-updater.pl/updates/zip/update.zip" > /var/www/html/updates/txt/download_link.txt
-	echo "http://app-updater.pl/updates/zip/gapps.zip" > /var/www/html/updates/txt/download_gapps.txt
 	echo $cm_version > /var/www/html/updates/txt/version.txt
 	echo $cm_version > /var/www/html/updates/txt/version_debug.txt
 	
+	echo $gapps_status
+
+	if [ "$gapps_status" == "0" ]
+	then
+		echo "http://app-updater.pl/updates/zip/gapps.zip" > /var/www/html/updates/txt/download_gapps.txt
+		mv $current_dir/"gapps.zip" /var/www/html/updates/zip/gapps.zip
+	else
+		rm $current_dir/"gapps.zip"
+	fi
+
 	echo "Create MD5"
 	md5sum $zip_name_date > $zip_name_date.md5
 	cd /var/www/html/updates/zip
