@@ -86,13 +86,13 @@ else
 	mv $current_dir/changelog.txt /var/www/html/updates/txt/changelog.txt
 	
 	cd $current_dir
-	sha1down=$(<$zip_name_date.md5)
-	sha1down_org=$(sha1sum $zip_name_date)
+	md5down=$(<$zip_name_date.md5)
+	md5down_org=$(md5sum $zip_name_date)
 	
 	echo "Remove tmp files"
 	rm -r $current_dir/out
 	
-	if [ "${sha1down_org,,}" != "${sha1down,,}" ]
+	if [ "${md5down_org,,}" != "${md5down,,}" ]
 	then
 		echo "Checksum failed"
 		rm $zip_name_date
