@@ -61,9 +61,6 @@ else
 	zip -r $zip_name_date .
 	cd $current_dir/
 	mv $current_dir/out/$zip_name_date $current_dir/
-	
-	echo "Remove tmp files"
-	rm -r $current_dir/out
 
 	echo "Create link && send update"
 	cp $current_dir/$zip_name_date /var/www/html/updates/zip/update.zip
@@ -92,9 +89,12 @@ else
 	sha1down=$(<$zip_name_date.md5)
 	sha1down_org=$(sha1sum $zip_name_date)
 	
+	echo "Remove tmp files"
+	rm -r $current_dir/out
+	
 	if [ "${sha1down_org,,}" != "${sha1down,,}" ]
 	then
-		echo "Checksum filed"
+		echo "Checksum failed"
 		rm $zip_name_date
 		rm $zip_name_date.md5
 		./cm13
