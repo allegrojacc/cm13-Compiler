@@ -88,6 +88,7 @@ else
 	mv $current_dir/update.zip.md5 /var/www/html/updates/zip/update.zip.md5
 	mv $current_dir/changelog.txt /var/www/html/updates/txt/changelog.txt
 	
+	cd $current_dir
 	sha1down=$(<$zip_name_date.md5)
 	sha1down_org=$(sha1sum $zip_name_date)
 	
