@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
-cm_date="20160930"
+cm_date="20161001"
 cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
-sha1sum="72558c1e39fc77b0a40c8aa67a958090af83a2be"
+sha1sum="26D7771AE2743486BE62D617B751C85CB3BE661F"
 zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
 
-wget https://download.cyanogenmod.org/get/jenkins/181420/cm-13.0-20160930-NIGHTLY-w5.zip -O $zip_name_date
+wget https://download.cyanogenmod.org/get/jenkins/181564/cm-13.0-20161001-NIGHTLY-w5.zip -O $zip_name_date
 wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip");
 gapps_status=$?;
 
