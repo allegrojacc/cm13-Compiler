@@ -19,7 +19,7 @@ if [ "${sha1down_org,,}" != "${sha1down,,}" ]
 then
 	echo "Checksum filed"
 	rm $zip_name_date
-	./cm13
+	./cm
 	exit
 else 
 	mkdir out
