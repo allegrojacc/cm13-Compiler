@@ -111,11 +111,11 @@ else
 	rm /var/www/html/updates/zip/update-$cm.zip
 	
 	echo "Add to file"
-	sed -i '1i'$dl_md5_link /var/www/html/includes/links.txt
-	sed -i '1i'$dl_link  /var/www/html/includes/links.txt
-	sed -i '1i'$cm /var/www/html/includes/links.txt
-	sed -i '1i'$cm_date /var/www/html/includes/links.txt
-	sed -i '1i-' /var/www/html/includes/links.txt
+	echo $dl_md5_link | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $dl_link | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $cm | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $cm_date | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo '-' | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
 	
 	echo "Succes"
 fi
