@@ -1,28 +1,29 @@
 #!/usr/bin/env bash
-current_dir=$(pwd)
-cm_date="20161107"
-cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
-sha1sum="B056AB240964A1690A10D2A01F1881840D323316"
-zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
-jenkins_id="186288"
+
+php /root/get_url_build_cm13.php
+
 cm="cm13"
 
-wget https://download.cyanogenmod.org/get/jenkins/$jenkins_id/cm-13.0-$cm_date-NIGHTLY-w5.zip -O $zip_name_date
-wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip")
-gapps_status=$?
-wget http://oss.reflected.net/jenkins/$jenkins_id/CHANGES.txt -O changelog-$cm.txt
-
-sha1sum $zip_name_date
-sha1down=$sha1sum"  "$zip_name_date
-sha1down_org=$(sha1sum $zip_name_date)
-
-if [ "${sha1down_org,,}" != "${sha1down,,}" ]
+if [ "$(head -n 1 /var/www/html/updates/txt/date_$cm.txt)" == "$(head -n 1 /var/www/html/updates/txt/last_date_$cm.txt)" ]
 then
-	echo "Checksum filed"
-	rm $zip_name_date
-	./cm
+	echo "Brak aktualizacji"
 	exit
 else 
+	current_dir=$(pwd)
+	cm_date=$(head -n 1 /var/www/html/updates/txt/date_$cm.txt)
+	cm_version="13.0-"$cm_date"-NIGHTLY-w55n"
+	zip_name_date="cm-13.0-"$cm_date"-NIGHTLY-w5.zip"
+	jenkins_id=$(head -n 1 /var/www/html/updates/txt/jenkins_id__$cm.txt)
+
+	wget https://download.cyanogenmod.org/get/jenkins/$jenkins_id/cm-13.0-$cm_date-NIGHTLY-w5.zip -O $zip_name_date
+	wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-6.0-pico-"$cm_date".zip -O "gapps.zip")
+	gapps_status=$?
+	wget http://oss.reflected.net/jenkins/$jenkins_id/CHANGES.txt -O changelog-$cm.txt
+
+	sha1sum $zip_name_date
+	sha1down=$sha1sum"  "$zip_name_date
+	sha1down_org=$(sha1sum $zip_name_date)
+
 	mkdir out
 	unzip $zip_name_date -d $current_dir/out
 	rm $zip_name_date
