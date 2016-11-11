@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-php /root/get_url_build_cm13.php
-
 cm="cm13"
 
 if [ "$(head -n 1 /var/www/html/updates/txt/date_$cm.txt)" == "$(head -n 1 /var/www/html/updates/txt/last_date_$cm.txt)" ]
