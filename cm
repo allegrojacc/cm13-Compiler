@@ -116,6 +116,6 @@ else
 	echo $cm_date | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
 	echo '-' | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
 	
-	echo $cm_date > /var/www/html/updates/txt/last_date_$cm.txt.txt
+	echo $cm_date > /var/www/html/updates/txt/last_date_$cm.txt
 	echo "Succes"
 fi
