@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+cm="cm14.1"
+
+if [ "$(head -n 1 /var/www/html/updates/txt/date_$cm.txt)" == "$(head -n 1 /var/www/html/updates/txt/last_date_$cm.txt)" ]
+then
+	echo "Brak aktualizacji"
+	exit
+else 
+	current_dir=$(pwd)
+	cm_date=$(head -n 1 /var/www/html/updates/txt/date_$cm.txt)
+	cm_version="14.1-"$cm_date"-NIGHTLY-w55n"
+	zip_name_date="cm-14.1-"$cm_date"-NIGHTLY-w5.zip"
+	jenkins_id=$(head -n 1 /var/www/html/updates/txt/jenkins_id_$cm.txt)
+
+	wget https://download.cyanogenmod.org/get/jenkins/$jenkins_id/cm-14.1-$cm_date-NIGHTLY-w5.zip -O $zip_name_date
+	wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-7.1-pico-"$cm_date".zip -O "gapps_14.1.zip")
+	gapps_status=$?
+	wget http://oss.reflected.net/jenkins/$jenkins_id/CHANGES.txt -O changelog-$cm.txt
+
+	sha1sum $zip_name_date
+	sha1down=$sha1sum"  "$zip_name_date
+	sha1down_org=$(sha1sum $zip_name_date)
+
+	mkdir out
+	unzip $zip_name_date -d $current_dir/out
+	rm $zip_name_date
+
+	echo "Create dirs"
+	mkdir -p out/system/app/Updater
+	mkdir -p out/system/usr/keylayout
+
+	echo "Move files"
+	cp /var/www/html/updates/update-$cm.apk $current_dir/out/system/app/Updater/Updater.apk
+	mv $current_dir/Generic.kl $current_dir/out/system/usr/keylayout/Generic.kl
+	mv $current_dir/fixup.sh $current_dir/out/fixup.sh
+
+	echo "Edit Build.prop"
+	sed -i 's/w5/w55n/g' $current_dir/out/system/build.prop
+	echo '' >> $current_dir/out/system/build.prop
+	echo 'ro.nfc.port=I2C' >> $current_dir/out/system/build.prop
+	echo 'ro.build.description=cm_w55n-userdebug 7.1 NDE63X cf84cd3c64 test-keys' >> $current_dir/out/system/build.prop
+	echo 'ro.build.fingerprint=lge/cm_w55n/w55n:7.1/NDE63X/cf84cd3c64:userdebug/test-keys' >> $current_dir/out/system/build.prop
+	echo 'persist.radio.multisim.config=none' >> $current_dir/out/system/build.prop
+	echo 'telephony.lteOnCdmaDevice=0' >> $current_dir/out/system/build.prop
+	echo 'ro.build.product=w55n' >> $current_dir/out/system/build.prop
+	echo 'ro.product.model=LG-D280n' >> $current_dir/out/system/build.prop
+	echo 'ro.product.device=w55n' >> $current_dir/out/system/build.prop
+	echo 'ro.sf.hwrotation=180' >> $current_dir/out/system/build.prop
+
+	echo "Edit updater-script"
+	sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > $current_dir/ups_tmp
+	rm $current_dir/out/META-INF/com/google/android/updater-script
+	mv $current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script
+	echo 'mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+	echo 'package_extract_dir("system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+	echo 'unmount("/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
+
+	echo "Compile to zip"
+	cd $current_dir/out
+	zip -r $zip_name_date .
+	cd $current_dir/
+	mv $current_dir/out/$zip_name_date $current_dir/
+
+	echo "Create link && send update"
+	cp $current_dir/$zip_name_date /var/www/html/updates/zip/update-$cm.zip
+	update_link=$(curl --upload-file /var/www/html/updates/zip/update-"$cm".zip https://transfer.sh/update-"$cm".zip)
+	echo $update_link > /var/www/html/updates/txt/download_link-$cm.txt
+	echo $cm_version > /var/www/html/updates/txt/version-$cm.txt
+	echo $cm_version > /var/www/html/updates/txt/version_debug.txt
+	
+	echo $gapps_status
+
+	if [ "$gapps_status" == "0" ]
+	then
+		dl_gapps_link=$(curl --upload-file $current_dir/"gapps_14.1.zip" https://transfer.sh/gapps_14.1.zip)
+		echo $dl_gapps_link > /var/www/html/updates/txt/download_gapps-$cm.txt
+	else
+		rm $current_dir/"gapps_14.1.zip"
+	fi
+
+	echo "Create MD5"
+	md5sum $zip_name_date > $zip_name_date.md5
+	cd /var/www/html/updates/zip
+	md5sum update-$cm.zip > $current_dir/update-$cm.zip.md5
+	mv $current_dir/update-$cm.zip.md5 /var/www/html/updates/zip/update-$cm.zip.md5
+	mv $current_dir/changelog-$cm.txt /var/www/html/updates/txt/changelog-$cm.txt
+	
+	cd $current_dir
+	md5down=$(<$zip_name_date.md5)
+	md5down_org=$(md5sum $zip_name_date)
+	
+	echo "Remove tmp files"
+	rm -r $current_dir/out
+	
+	if [ "${md5down_org,,}" != "${md5down,,}" ]
+	then
+		echo "Checksum failed"
+		rm $zip_name_date
+		rm $zip_name_date.md5
+		./cm
+	exit
+	else 
+		echo "Checksum Pass"
+	fi
+	
+	echo "Upload files"
+	dl_link=$(curl --upload-file "$zip_name_date" https://transfer.sh/"$zip_name_date")
+	dl_md5_link=$(curl --upload-file "$zip_name_date".md5 https://transfer.sh/"$zip_name_date".md5)
+	rm /var/www/html/updates/zip/update-$cm.zip
+	
+	echo "Add to file"
+	echo $dl_md5_link | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $dl_link | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $cm | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo $cm_date | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	echo '-' | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
+	
+	echo $cm_date > /var/www/html/updates/txt/last_date_$cm.txt
+	echo "Succes"
+fi
