@@ -5,7 +5,7 @@ cm_li="lineage"
 current_dir=$(pwd)
 cm_date=$(date +%Y%m%d)
 cm_version="14.1-"$cm_date"-nightly-w55n"
-zip_name_date="lineageos-14.1-"$cm_date"-nightly-w5-signed.zip"
+zip_name_date="lineage-14.1-"$cm_date"-nightly-w5-signed.zip"
 	
 if [ "$cm_date" == "$(head -n 1 /var/www/html/updates/txt/last_date_$cm.txt)" ]
 then
@@ -19,7 +19,7 @@ else
 		echo "Brak aktualizacji"
 		exit
 	else 	
-		wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-7.1-pico-"$cm_date".zip -O "gapps_14.1.zip")
+		wget_gapps=$(wget https://github.com/opengapps/arm/releases/download/"$cm_date"/open_gapps-arm-7.1-nano-"$cm_date".zip -O "gapps_14.1.zip")
 		gapps_status=$?
 
 		sha1sum $zip_name_date
@@ -37,7 +37,7 @@ else
 		echo "Move files"
 		cp /var/www/html/updates/update-$cm.apk $current_dir/out/system/app/Updater/Updater.apk
 		mv $current_dir/Generic.kl $current_dir/out/system/usr/keylayout/Generic.kl
-		mv $current_dir/fixup.sh $current_dir/out/fixup.sh
+		mv $current_dir/fixup.sh $current_dir/out/install/bin/fixup.sh
 
 		echo "Edit Build.prop"
 		sed -i 's/w5/w55n/g' $current_dir/out/system/build.prop
@@ -56,9 +56,6 @@ else
 		sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > $current_dir/ups_tmp
 		rm $current_dir/out/META-INF/com/google/android/updater-script
 		mv $current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script
-		echo 'mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
-		echo 'package_extract_dir("system", "/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
-		echo 'unmount("/system");' >> $current_dir/out/META-INF/com/google/android/updater-script
 
 		echo "Compile to zip"
 		cd $current_dir/out
