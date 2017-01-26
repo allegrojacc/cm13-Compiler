@@ -12,9 +12,9 @@ then
 	echo "Brak aktualizacji"
 	exit
 else 
-	wget_cm=$(wget https://mirrorbits.lineageos.org/full/w5/"$cm_date"/lineage-14.1-"cm_date"-nightly-w5-signed.zip -O "$zip_name_date")
+	wget_cm=$(wget https://mirrorbits.lineageos.org/full/w5/"$cm_date"/lineage-14.1-"$cm_date"-nightly-w5-signed.zip -O "$zip_name_date")
 	cm_status=$?
-	if [ "$cm_status" == "0" ]
+	if [ "$cm_status" != "0" ]
 	then 
 		echo "Brak aktualizacji"
 		exit
