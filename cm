@@ -53,7 +53,7 @@ else
 		echo 'ro.sf.hwrotation=180' >> "$current_dir/out/system/build.prop"
 
 		echo "Edit updater-script"
-		sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > "$current_dir/ups_tmp"
+		sed '1d' "$current_dir/out/META-INF/com/google/android/updater-script" > "$current_dir/ups_tmp"
 		rm "$current_dir/out/META-INF/com/google/android/updater-script"
 		mv "$current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script"
 
