@@ -35,54 +35,54 @@ else
 		mkdir -p out/system/usr/keylayout
 
 		echo "Move files"
-		cp /var/www/html/updates/update-$cm.apk $current_dir/out/system/app/Updater/Updater.apk
-		mv $current_dir/Generic.kl $current_dir/out/system/usr/keylayout/Generic.kl
-		mv $current_dir/fixup.sh $current_dir/out/install/bin/fixup.sh
+		cp "/var/www/html/updates/update-$cm.apk" "$current_dir/out/system/app/Updater/Updater.apk"
+		mv "$current_dir/Generic.kl" "$current_dir/out/system/usr/keylayout/Generic.kl"
+		mv "$current_dir/fixup.sh" "$current_dir/out/install/bin/fixup.sh"
 
 		echo "Edit Build.prop"
-		sed -i 's/w5/w55n/g' $current_dir/out/system/build.prop
-		echo '' >> $current_dir/out/system/build.prop
-		echo 'ro.nfc.port=I2C' >> $current_dir/out/system/build.prop
-		echo 'ro.build.description=cm_w55n-userdebug 7.1 NDE63X cf84cd3c64 test-keys' >> $current_dir/out/system/build.prop
-		echo 'ro.build.fingerprint=lge/cm_w55n/w55n:7.1/NDE63X/cf84cd3c64:userdebug/test-keys' >> $current_dir/out/system/build.prop
-		echo 'persist.radio.multisim.config=none' >> $current_dir/out/system/build.prop
-		echo 'telephony.lteOnCdmaDevice=0' >> $current_dir/out/system/build.prop
-		echo 'ro.build.product=w55n' >> $current_dir/out/system/build.prop
-		echo 'ro.product.model=LG-D280n' >> $current_dir/out/system/build.prop
-		echo 'ro.product.device=w55n' >> $current_dir/out/system/build.prop
-		echo 'ro.sf.hwrotation=180' >> $current_dir/out/system/build.prop
+		sed -i 's/w5/w55n/g' ""$current_dir/out/system/build.prop""
+		echo '' >> "$current_dir/out/system/build.prop"
+		echo 'ro.nfc.port=I2C' >> "$current_dir/out/system/build.prop"
+		echo 'ro.build.description=cm_w55n-userdebug 7.1 NDE63X cf84cd3c64 test-keys' >> "$current_dir/out/system/build.prop"
+		echo 'ro.build.fingerprint=lge/cm_w55n/w55n:7.1/NDE63X/cf84cd3c64:userdebug/test-keys' >> "$current_dir/out/system/build.prop"
+		echo 'persist.radio.multisim.config=none' >> "$current_dir/out/system/build.prop"
+		echo 'telephony.lteOnCdmaDevice=0' >> "$current_dir/out/system/build.prop"
+		echo 'ro.build.product=w55n' >> "$current_dir/out/system/build.prop"
+		echo 'ro.product.model=LG-D280n' >> "$current_dir/out/system/build.prop"
+		echo 'ro.product.device=w55n' >> "$current_dir/out/system/build.prop"
+		echo 'ro.sf.hwrotation=180' >> "$current_dir/out/system/build.prop"
 
 		echo "Edit updater-script"
-		sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > $current_dir/ups_tmp
-		rm $current_dir/out/META-INF/com/google/android/updater-script
-		mv $current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script
+		sed '1d' $current_dir/out/META-INF/com/google/android/updater-script > "$current_dir/ups_tmp"
+		rm "$current_dir/out/META-INF/com/google/android/updater-script"
+		mv "$current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script"
 
 		echo "Compile to zip"
-		cd $current_dir/out
+		cd "$current_dir/out"
 		zip -r $zip_name_date .
-		cd $current_dir/
+		cd "$current_dir/"
 		mv "$current_dir/out/$zip_name_date" "$current_dir/$zip_name_date"
 
 		echo "Create link && send update"
-		mv "$current_dir/$zip_name_date" "/var/www/html/updates/zip/update-$cm.zip"
+		cp "$current_dir/$zip_name_date" "/var/www/html/updates/zip/update-$cm.zip"
 		update_link=$(curl --upload-file /var/www/html/updates/zip/update-"$cm".zip https://transfer.sh/update-"$cm".zip)
-		echo $update_link > /var/www/html/updates/txt/download_link-$cm.txt
-		echo $cm_version > /var/www/html/updates/txt/version-$cm.txt
-		echo $cm_version > /var/www/html/updates/txt/version_debug.txt
+		echo $update_link > "/var/www/html/updates/txt/download_link-$cm.txt"
+		echo $cm_version > "/var/www/html/updates/txt/version-$cm.txt"
+		echo $cm_version > "/var/www/html/updates/txt/version_debug.txt"
 		
 		echo $gapps_status
 
 		if [ "$gapps_status" == "0" ]
 		then
 			dl_gapps_link=$(curl --upload-file $current_dir/"gapps_14.1.zip" https://transfer.sh/gapps_14.1.zip)
-			echo $dl_gapps_link > /var/www/html/updates/txt/download_gapps-$cm.txt
+			echo $dl_gapps_link > "/var/www/html/updates/txt/download_gapps-$cm.txt"
 		else
 			rm "$current_dir/gapps_14.1.zip"
 		fi
 
 		echo "Create MD5"
 		md5sum $zip_name_date > $zip_name_date.md5
-		cd /var/www/html/updates/zip
+		cd "/var/www/html/updates/zip"
 		md5sum update-$cm.zip > $current_dir/update-$cm.zip.md5
 		mv "$current_dir/update-$cm.zip.md5" "/var/www/html/updates/zip/update-$cm.zip.md5"
 		
@@ -91,7 +91,7 @@ else
 		md5down_org=$(md5sum $zip_name_date)
 		
 		echo "Remove tmp files"
-		rm -r $current_dir/out
+		rm -r "$current_dir/out"
 		
 		if [ "${md5down_org,,}" != "${md5down,,}" ]
 		then
