@@ -61,10 +61,10 @@ else
 		cd $current_dir/out
 		zip -r $zip_name_date .
 		cd $current_dir/
-		mv $current_dir/out/$zip_name_date $current_dir/
+		mv "$current_dir/out/$zip_name_date" "$current_dir/$zip_name_date"
 
 		echo "Create link && send update"
-		cp $current_dir/$zip_name_date /var/www/html/updates/zip/update-$cm.zip
+		mv "$current_dir/$zip_name_date" "/var/www/html/updates/zip/update-$cm.zip"
 		update_link=$(curl --upload-file /var/www/html/updates/zip/update-"$cm".zip https://transfer.sh/update-"$cm".zip)
 		echo $update_link > /var/www/html/updates/txt/download_link-$cm.txt
 		echo $cm_version > /var/www/html/updates/txt/version-$cm.txt
@@ -77,15 +77,14 @@ else
 			dl_gapps_link=$(curl --upload-file $current_dir/"gapps_14.1.zip" https://transfer.sh/gapps_14.1.zip)
 			echo $dl_gapps_link > /var/www/html/updates/txt/download_gapps-$cm.txt
 		else
-			rm $current_dir/"gapps_14.1.zip"
+			rm "$current_dir/gapps_14.1.zip"
 		fi
 
 		echo "Create MD5"
 		md5sum $zip_name_date > $zip_name_date.md5
 		cd /var/www/html/updates/zip
 		md5sum update-$cm.zip > $current_dir/update-$cm.zip.md5
-		mv $current_dir/update-$cm.zip.md5 /var/www/html/updates/zip/update-$cm.zip.md5
-		mv $current_dir/changelog-$cm.txt /var/www/html/updates/txt/changelog-$cm.txt
+		mv "$current_dir/update-$cm.zip.md5" "/var/www/html/updates/zip/update-$cm.zip.md5"
 		
 		cd $current_dir
 		md5down=$(<$zip_name_date.md5)
@@ -108,7 +107,7 @@ else
 		echo "Upload files"
 		dl_link=$(curl --upload-file "$zip_name_date" https://transfer.sh/"$zip_name_date")
 		dl_md5_link=$(curl --upload-file "$zip_name_date".md5 https://transfer.sh/"$zip_name_date".md5)
-		rm /var/www/html/updates/zip/update-$cm.zip
+		rm "/var/www/html/updates/zip/update-$cm.zip"
 		
 		echo "Add to file"
 		echo $dl_md5_link | cat - /var/www/html/includes/links.txt > temp && mv temp /var/www/html/includes/links.txt
