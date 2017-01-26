@@ -40,7 +40,7 @@ else
 		mv "$current_dir/fixup.sh" "$current_dir/out/install/bin/fixup.sh"
 
 		echo "Edit Build.prop"
-		sed -i 's/w5/w55n/g' ""$current_dir/out/system/build.prop""
+		sed -i 's/w5/w55n/g' "$current_dir/out/system/build.prop"
 		echo '' >> "$current_dir/out/system/build.prop"
 		echo 'ro.nfc.port=I2C' >> "$current_dir/out/system/build.prop"
 		echo 'ro.build.description=cm_w55n-userdebug 7.1 NDE63X cf84cd3c64 test-keys' >> "$current_dir/out/system/build.prop"
@@ -55,7 +55,7 @@ else
 		echo "Edit updater-script"
 		sed '1d' "$current_dir/out/META-INF/com/google/android/updater-script" > "$current_dir/ups_tmp"
 		rm "$current_dir/out/META-INF/com/google/android/updater-script"
-		mv "$current_dir/ups_tmp $current_dir/out/META-INF/com/google/android/updater-script"
+		mv "$current_dir/ups_tmp" "$current_dir/out/META-INF/com/google/android/updater-script"
 
 		echo "Compile to zip"
 		cd "$current_dir/out"
@@ -105,8 +105,8 @@ else
 		fi
 		
 		echo "Upload files"
-		dl_link=$(curl --upload-file "$zip_name_date" https://transfer.sh/"$zip_name_date")
-		dl_md5_link=$(curl --upload-file "$zip_name_date".md5 https://transfer.sh/"$zip_name_date".md5)
+		dl_link=$(curl --upload-file "$zip_name_date" "https://transfer.sh/$zip_name_date")
+		dl_md5_link=$(curl --upload-file "$zip_name_date.md5" "https://transfer.sh/$zip_name_date.md5")
 		rm "/var/www/html/updates/zip/update-$cm.zip"
 		
 		echo "Add to file"
