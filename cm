@@ -5,7 +5,7 @@ cm_li="lineage_14.1"
 current_dir=$(pwd)
 cm_date=$(date +%Y%m%d)
 cm_version="14.1-"$cm_date"-nightly-w55n"
-zip_name_date="lineage-14.1-"$cm_date"-nightly-w5-signed.zip"
+zip_name_date="lineage-14.1-"$cm_date"-nightly-w5.zip"
 	
 if [ "$cm_date" == "$(head -n 1 /var/www/html/updates/txt/last_date_$cm.txt)" ]
 then
