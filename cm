@@ -56,6 +56,9 @@ else
 		sed '1d' "$current_dir/out/META-INF/com/google/android/updater-script" > "$current_dir/ups_tmp"
 		rm "$current_dir/out/META-INF/com/google/android/updater-script"
 		mv "$current_dir/ups_tmp" "$current_dir/out/META-INF/com/google/android/updater-script"
+		echo 'mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");' >> "$current_dir/out/META-INF/com/google/android/updater-script"
+		echo 'package_extract_dir("system", "/system");' >> "$current_dir/out/META-INF/com/google/android/updater-script"
+		echo 'unmount("/system");' >> "$current_dir/out/META-INF/com/google/android/updater-script"
 
 		echo "Compile to zip"
 		cd "$current_dir/out"
