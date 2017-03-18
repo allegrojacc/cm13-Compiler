@@ -3,7 +3,8 @@
 cm="cm14.1"
 cm_li="lineage_14.1"
 current_dir=$(pwd)
-cm_date=$(date +%Y%m%d)
+#cm_date=$(date +%Y%m%d)
+cm_date=20170317
 cm_version="14.1-"$cm_date"-nightly-w55n"
 zip_name_date="lineage-14.1-"$cm_date"-nightly-w5.zip"
 	
